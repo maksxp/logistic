@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+	<link rel="icon" type="image/x-icon" href="/favicon.ico" th:href="@{/images/favicon.ico}" />
+	<title>Registration Form</title>
+	<link rel="stylesheet" type="text/css" th:href="@{/css/main.css}" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container-fluid">
+	<div class="row row-flex">
+		<div  class=" col-md-4 col-xs-12 col-sm-4 col-lg-4">
+			<form >
+				<button class="btn btn-md btn-link btn-block" type="Submit">ви увійшли як  <span th:text="${#httpServletRequest.remoteUser}"> </span></button>
+			</form>
+		</div>
+
+		<div class=" col-md-4 col-xs-12 col-sm-4 col-lg-4" >
+			<form th:action="@{/viasat/allEquipments}" method="get">
+				<button class="btn btn-md btn-success btn-block" type="Submit">Все обладнання</button>
+			</form>
+		</div>
+		<div class=" col-md-3 col-xs-12 col-sm-3 col-lg-3" >
+			<form th:action="@{/viasat/allModels}" method="get">
+				<button class="btn btn-md btn-info btn-block" type="Submit">Всі моделі обладнання</button>
+			</form>
+		</div>
+		<div class=" col-md-1 col-xs-12 col-sm-1 col-lg-1" >
+			<form th:action="@{/logout}" method="get">
+				<button class="btn btn-md btn-danger btn-block" name="logout" type="Submit">Вийти</button>
+			</form>
+		</div>
+	</div>
+</div>
+<div class="container">
+		<div class="row">
+			<div class="col-md-6 col-md-offset-3">
+				<form action="#" autocomplete="off" th:object="${equipment}" th:action="@{/viasat/equipmentUpload}"
+					  method="post" enctype="multipart/form-data" class="form-horizontal" role="form">
+					<div class="form-group">
+						<h2>Форма додавання обладнання</h2>
+						<div class="col-sm-9">
+							<label>Стан</label>
+							<select th:field="*{state}">
+								<option th:value="new">нове</option>
+								<option th:value="used">Б/У</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-9">
+							<label>Модель</label>
+							<select th:field="*{modelName}">
+								<option th:each="model : ${allModels}" th:value="${{model.name}}" th:text="${model.name}">
+								</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-9">
+							<label>Тип обладнання</label>
+							<select th:field="*{type}">
+								<option th:value="DTH">DTH</option>
+								<option th:value="OTT">OTT</option>
+							</select>
+						</div>
+					</div>
+					<input type="file" name="myFile" />
+					<input type="submit" />
+					<span th:utext="${successMessage}"></span>
+				</form>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

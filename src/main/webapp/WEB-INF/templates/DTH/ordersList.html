@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:th="http://www.thymeleaf.org">
+<head>
+	<link rel="icon" type="image/x-icon" href="/favicon.ico" th:href="@{/images/favicon.ico}" />
+	<title>Orders List</title>
+	<link rel="stylesheet" type="text/css" th:href="@{/css/main.css}" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+	<!--data tables-->
+	<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.13/css/jquery.dataTables.css"/>
+	<script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+	<!--jquery should be upper than local *.js-->
+	<script type="text/javascript" src="../static/js/script.js" ></script>
+</head>
+<body>
+<div class="container-fluid">
+	<div class="row row-flex">
+		<div  align="center" class=" col-md-4 col-xs-12 col-sm-4 col-lg-4" style="background-color:lavender" >
+			<div class="text"><p> ви увійшли як  <span th:text="${#httpServletRequest.remoteUser}"> </span></p></div>
+		</div>
+
+		<div class=" col-md-6 col-xs-12 col-sm-6 col-lg-6" style="background-color:lavenderblush">
+			<form th:action="@{/DTH/order}" method="get">
+				<button class="btn btn-md btn-info btn-block" type="Submit">Створити заявку</button>
+			</form>
+		</div>
+		<div class=" col-md-2 col-xs-12 col-sm-2 col-lg-2" >
+			<form th:action="@{/logout}" method="get">
+				<button class="btn btn-md btn-danger btn-block" name="logout" type="Submit">Вийти</button>
+			</form>
+		</div>
+	</div>
+</div>
+<div class="container">
+	<h2>Список заявок</h2>
+	<table id="tables" class="display" cellspacing="0" width="100%">
+		<thead>
+		<tr>
+			<th>Номер</th>
+			<th>Статус</th>
+			<th>Дата створення</th>
+			<th>Дата погодження</th>
+			<th>Дата Виконання</th>
+			<th>ТТН</th>
+			<th>Кількість</th>
+			<th>Модель</th>
+		</tr>
+		</thead>
+		<tfoot>
+		<tr>
+			<th>Номер</th>
+			<th>Статус</th>
+			<th>Дата створення</th>
+			<th>Дата погодження</th>
+			<th>Дата Виконання</th>
+			<th>ТТН</th>
+			<th>Кількість</th>
+			<th>Модель</th>
+		</tr>
+		</tfoot>
+		<tbody>
+		<tr th:each="order : ${myOrders}">
+			<td th:text="${order.id}">ID</td>
+			<td th:text="${order.status}">Status</td>
+			<td th:text="${order.startDate}?(${#dates.format(order.startDate, 'dd.MM.yyyy')}):(${order.startDate})">Creation Date</td>
+			<td th:text="${order.approveDate}?(${#dates.format(order.approveDate, 'dd.MM.yyyy')}):(${order.approveDate})">Approve Date</td>
+			<td th:text="${order.closeDate}?(${#dates.format(order.closeDate, 'dd.MM.yyyy')}):(${order.closeDate})">Approve Date</td>
+			<td th:text="${order.ttn}">Order TTN(NOVA POSHTA)</td>
+			<td th:text="${order.quantity}">Order Quantity</td>
+			<td th:text="${order.model}">Model</td>
+		</tr>
+		</tbody>
+	</table>
+
+</div>
+
+</body>
+</html>

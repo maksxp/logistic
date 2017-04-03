@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:th="http://www.thymeleaf.org">
+<head>
+	<link rel="icon" type="image/x-icon" href="/favicon.ico" th:href="@{/images/favicon.ico}" />
+	<title>Orders List</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/main.css}" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+		<!--data tables-->
+	<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.13/css/jquery.dataTables.css"/>
+	<script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+	<!--jquery should be upper than local *.js-->
+	<script type="text/javascript" src="../static/js/script.js" ></script>
+	</head>
+<body>
+<div class="container-fluid">
+	<div class="row row-flex">
+		<div  align="center" class=" col-md-3 col-xs-12 col-sm-3 col-lg-3" style="background-color:lavender" >
+			<div class="text"><p> ви увійшли як  <span th:text="${#httpServletRequest.remoteUser}"> </span></p></div>
+		</div>
+		<div class=" col-md-2 col-xs-12 col-sm-2 col-lg-2" >
+			<form th:action="@{/viasat/allEquipments}" method="get">
+				<button class="btn btn-md btn-success btn-block" type="Submit">Все обладнання</button>
+			</form>
+		</div>
+		<div class=" col-md-3 col-xs-12 col-sm-3 col-lg-3" >
+			<form th:action="@{/viasat/assignedOrdersList}" method="get">
+				<button class="btn btn-md btn-info btn-block" type="Submit">Заявки на погодженні</button>
+			</form>
+		</div>
+		<div class=" col-md-2 col-xs-12 col-sm-2 col-lg-2" style="background-color:lavenderblush">
+			<form th:action="@{/viasat/order}" method="get">
+				<button class="btn btn-md btn-warning btn-block" type="Submit">Створити заявку</button>
+			</form>
+		</div>
+		<div class=" col-md-2 col-xs-12 col-sm-2 col-lg-2" >
+			<form th:action="@{/logout}" method="get">
+				<button class="btn btn-md btn-danger btn-block" name="logout" type="Submit">Вийти</button>
+			</form>
+		</div>
+	</div>
+</div>
+<div class="container">
+	<h2>Список заявок</h2>
+	<table id="tables" class="display" cellspacing="0" width="100%">
+		<thead>
+		<tr>
+			<th>Номер</th>
+			<th>Замовник</th>
+			<th>Дилер</th>
+			<th>Дата створення</th>
+			<th>Кількість</th>
+			<th>Модель</th>
+			<th>Погодження</th>
+		</tr>
+		</thead>
+		<tfoot>
+		<tr>
+			<th>Номер</th>
+			<th>Замовник</th>
+			<th>Дилер</th>
+			<th>Дата створення</th>
+			<th>Кількість</th>
+			<th>Модель</th>
+			<th>Погодження</th>
+		</tr>
+		</tfoot>
+		<tbody>
+		<tr th:each="order : ${viasatOrders}">
+			<td> <a th:href="${'/viasat/editOrder/' + order.id}"> <span th:text="${order.id}"></span></a></td>
+			<td th:text="${order.user.name}">Name</td>
+			<td th:text="${order.company}">Company</td>
+			<td th:text="${order.startDate}?(${#dates.format(order.startDate, 'dd.MM.yyyy')}):(${order.startDate})">Creation Date</td>
+			<td th:text="${order.quantity}">Order Quantity</td>
+			<td th:text="${order.model}">Model</td>
+			<td><a th:href="${'/viasat/confirmOrder/' + order.id}">Погодити</a></td>
+		</tr>
+		</tbody>
+	</table>
+</div>
+</body>
+</html>

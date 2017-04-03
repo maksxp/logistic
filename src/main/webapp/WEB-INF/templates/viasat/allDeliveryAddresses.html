@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+	<link rel="icon" type="image/x-icon" href="/favicon.ico" th:href="@{/images/favicon.ico}" />
+	<title>Delivery Addresses List</title>
+	<link rel="stylesheet" type="text/css" th:href="@{/css/main.css}" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+  	<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>-->
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container-fluid">
+	<div class="row row-flex">
+			<div  class=" col-md-4 col-xs-12 col-sm-4 col-lg-4">
+			<form >
+				<button class="btn btn-md btn-link btn-block" type="Submit">ви увійшли як  <span th:text="${#httpServletRequest.remoteUser}"> </span></button>
+			</form>
+		</div>
+
+		<div class=" col-md-2 col-xs-12 col-sm-2 col-lg-2" >
+			<form th:action="@{/viasat/allOrdersList}" method="get">
+				<button class="btn btn-md btn-success btn-block" type="Submit">Всі заявки</button>
+			</form>
+		</div>
+		<div class=" col-md-5 col-xs-12 col-sm-5 col-lg-5" >
+			<form th:action="@{/viasat/deliveryAddressRegistration}" method="get">
+				<button class="btn btn-md btn-warning btn-block" type="Submit">Додати адресу доставки</button>
+			</form>
+		</div>
+		<div class=" col-md-1 col-xs-12 col-sm-1 col-lg-1" >
+			<form th:action="@{/logout}" method="get">
+				<button class="btn btn-md btn-danger btn-block" name="logout" type="Submit">Вийти</button>
+			</form>
+		</div>
+	</div>
+</div>
+	<div class="container">
+			<h2>Список адрес для доставки</h2>
+			<table class="table table-striped">
+				<tr>
+					<th>Адреса</th>
+					<th>Дилер</th>
+				</tr>
+				<tr th:each="deliveryAddress : ${allDeliveryAddresses}">
+					<td th:text="${deliveryAddress.address}">Address</td>
+					<td th:text="${deliveryAddress.companyName}">Company</td>
+
+				</tr>
+			</table>
+
+	</div>
+</body>
+</html>

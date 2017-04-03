@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<link rel="icon" type="image/x-icon" href="/favicon.ico" th:href="@{/images/favicon.ico}" />
+	<title>Order Closing Form</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+	<link rel="stylesheet" type="text/css" th:href="@{/css/main.css}" />
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="../../../static/css/main.css"/>
+</head>
+<body>
+<div class="container-fluid">
+	<div class="row row-flex">
+		<div  align="center" class=" col-md-3 col-xs-12 col-sm-3 col-lg-3" style="background-color:lavender" >
+			<div class="text"><p> ви увійшли як  <span th:text="${#httpServletRequest.remoteUser}"> </span></p></div>
+		</div>
+		<div class=" col-md-4 col-xs-12 col-sm-4 col-lg-4" style="background-color:lavenderblush">
+			<form th:action="@{/Warehouse/warehouseOrdersList}" method="get">
+				<button class="btn btn-md btn-warning btn-block" type="Submit">Заявки в роботі</button>
+			</form>
+		</div>
+		<div class=" col-md-3 col-xs-12 col-sm-3 col-lg-3" style="background-color:lavenderblush">
+			<form th:action="@{/Warehouse/allOrdersList}" method="get">
+				<button class="btn btn-md btn-info btn-block" type="Submit">Всі заявки</button>
+			</form>
+		</div>
+		<div class=" col-md-2 col-xs-12 col-sm-2 col-lg-2" >
+			<form th:action="@{/logout}" method="get">
+				<button class="btn btn-md btn-danger btn-block" name="logout" type="Submit">Вийти</button>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-6 col-md-offset-3">
+			<form autocomplete="off" action="#" th:action="@{/Warehouse/closeOrder}"
+				 method="post" th:object="${order}" enctype="multipart/form-data" class="form-horizontal" role="form">
+
+				<input type="hidden" th:field="*{id}"/>
+					<div class="order">
+				<table class="order" width="100%" cellspacing="0" border="0">
+					<tr>
+						<th><h5>Заявка №</h5></th>
+						<th><h5><label th:text="*{id}"></label></h5></th>
+					</tr>
+					<tr>
+						<th><h5>Модель</h5></th>
+						<th><h5><label th:text="*{model}"></label></h5></th>
+					</tr>
+					<tr>
+						<th><h5>Кількість</h5></th>
+						<th><h5><label th:text="*{quantity}"></label></h5></th>
+					</tr>
+					<tr>
+						<th><h5>Адреса</h5></th>
+						<th><h5><label th:text="*{address}"></label></h5></th>
+					</tr>
+					<tr>
+						<th><h5>Прізвище</h5></th>
+						<th><h5><label th:text="*{surname}"></label></h5></th>
+					</tr>
+					<tr>
+						<th><h5>Ім'я</h5></th>
+						<th><h5><label th:text="*{name}"></label></h5></th>
+					</tr>
+					<tr>
+						<th><h5>Телефон</h5></th>
+						<th><h5><label th:text="*{phone}"></label></h5></th>
+					</tr>
+				</table>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-9">
+						<input type="text" th:field="*{ttn}"
+							   placeholder="Будь ласка, введіть номер ТТН" class="form-control" />
+					</div>
+				</div>
+				<h3>Оберіть файл з серійними номерами для закриття заявки   </h3>
+				<input type="file" name="myFile" />
+				<input type="submit" />
+				<span th:utext="${successMessage}"></span>
+				<span th:utext="${errorMessage}"></span>
+			</form>
+		</div>
+	</div>
+</div>
+
+</body>
+</html>

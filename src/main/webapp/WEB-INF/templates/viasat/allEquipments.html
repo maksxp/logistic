@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+	<link rel="icon" type="image/x-icon" href="/favicon.ico" th:href="@{/images/favicon.ico}" />
+	<title>All Equipments</title>
+	<link rel="stylesheet" type="text/css" th:href="@{/css/main.css}" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+	<!--data tables-->
+	<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.13/css/jquery.dataTables.css"/>
+	<script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+	<!--jquery should be upper than local *.js-->
+	<script type="text/javascript" src="../static/js/script.js" ></script>
+</head>
+<body>
+<div class="container-fluid">
+	<div class="row row-flex">
+			<div  class=" col-md-4 col-xs-12 col-sm-4 col-lg-4">
+			<form >
+				<button class="btn btn-md btn-link btn-block" type="Submit">ви увійшли як  <span th:text="${#httpServletRequest.remoteUser}"> </span></button>
+			</form>
+		</div>
+
+		<div class=" col-md-2 col-xs-12 col-sm-2 col-lg-2" >
+			<form th:action="@{/viasat/allOrdersList}" method="get">
+				<button class="btn btn-md btn-success btn-block" type="Submit">Всі заявки</button>
+			</form>
+		</div>
+		<div class=" col-md-2 col-xs-12 col-sm-2 col-lg-2" >
+			<form th:action="@{/viasat/equipmentUpload}" method="get">
+				<button class="btn btn-md btn-warning btn-block" type="Submit">Додати обладнання</button>
+			</form>
+		</div>
+		<div class=" col-md-3 col-xs-12 col-sm-3 col-lg-3" >
+			<form th:action="@{/viasat/modelRegistration}" method="get">
+				<button class="btn btn-md btn-warning btn-block" type="Submit">Додати нову модель</button>
+			</form>
+		</div>
+		<div class=" col-md-1 col-xs-12 col-sm-1 col-lg-1" >
+			<form th:action="@{/logout}" method="get">
+				<button class="btn btn-md btn-danger btn-block" name="logout" type="Submit">Вийти</button>
+			</form>
+		</div>
+	</div>
+</div>
+	<div class="container">
+			<h2>Список обладнання</h2>
+		<table id="tables" class="display" cellspacing="0" width="100%">
+			<thead>
+			<tr>
+				<th>Тип обладнання</th>
+				<th>Місцезнаходження</th>
+				<th>Дата прийому на склад</th>
+				<th>Дата передачі дилеру</th>
+				<th>Стан </th>
+				<th>Серйіний номер </th>
+				<th>Модель</th>
+			</tr>
+			</thead>
+			<tfoot>
+			<tr>
+				<th>Тип обладнання</th>
+				<th>Місцезнаходження</th>
+				<th>Дата прийому на склад</th>
+				<th>Дата передачі дилеру</th>
+				<th>Стан </th>
+				<th>Серйіний номер </th>
+				<th>Модель</th>
+			</tr>
+			</tfoot>
+			<tbody>
+					<tr th:each="equipment : ${allEquipments}">
+					<td th:text="${equipment.type}">Type</td>
+					<td th:text="${equipment.location}">Location</td>
+					<td th:text="${equipment.warehouseDate}?(${#dates.format(equipment.warehouseDate, 'dd.MM.yyyy')}):(${equipment.warehouseDate})">Warehouse Date</td>
+					<td th:text="${equipment.dealerDate}?(${#dates.format(equipment.dealerDate, 'dd.MM.yyyy')}):(${equipment.dealerDate})">Dealer Date</td>
+					<td th:text="${equipment.state}">State</td>
+					<td th:text="${equipment.serialNumber}">Serial Number</td>
+					<td th:text="${equipment.modelName}">Model</td>
+								</tr>
+			</tbody>
+			</table>
+		</div>
+	</body>
+</html>
