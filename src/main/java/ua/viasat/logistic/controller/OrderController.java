@@ -12,7 +12,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-import ua.viasat.logistic.model.DeliveryAddress;
 import ua.viasat.logistic.model.Equipment;
 import ua.viasat.logistic.model.Order;
 import ua.viasat.logistic.model.User;
@@ -95,7 +94,6 @@ public class OrderController {
             modelAndView.addObject("allModels", modelService.listAllModels());
             modelAndView.setViewName("DTH/order");
         } else {
-//            order.setCompany(company);
             orderService.saveOrder(order);
             modelAndView.addObject("successMessage", "Заявку успішно створено");
             modelAndView.addObject("allModels", modelService.listAllModels());
@@ -114,7 +112,6 @@ public class OrderController {
         modelAndView.setViewName("DTH/ordersList");
         return modelAndView;
     }
-
     @RequestMapping(value="viasat/allOrdersList", method = RequestMethod.GET)
     public ModelAndView allOrders(){
         ModelAndView modelAndView = new ModelAndView();
@@ -143,14 +140,12 @@ public class OrderController {
         modelAndView.setViewName("viasat/assignedOrdersList");
         return modelAndView;
     }
-
     @RequestMapping(value = "/viasat/confirmOrder/{id}", method = RequestMethod.GET)
     public ModelAndView confirmOrder(@PathVariable(value = "id") int id){
         Order order =  orderService.findOrderById(id);
         orderService.confirmOrder(order);
         return new ModelAndView("redirect:/viasat/assignedOrdersList");
     }
-
     @RequestMapping(value = "/viasat/confirmOrder", method = RequestMethod.POST)
     public ModelAndView confirmOrder (@ModelAttribute("order")Order order) {
         orderService.confirmOrder(order);
@@ -186,11 +181,9 @@ public class OrderController {
         modelAndView.setViewName("/Warehouse/closeOrder");
         return modelAndView;
     }
-
     @RequestMapping(value = "/Warehouse/closeOrder", method = RequestMethod.POST)
     public ModelAndView warehouseEquipmentUpload (@RequestParam("myFile") MultipartFile myFile, @ModelAttribute("order") Order order) {
         Set<String> uploadedSerial = new HashSet<>();
-        InputStream is = null;
         ModelAndView modelAndView = new ModelAndView();
         String ttn = order.getTtn();
         order = orderService.findOrderById(order.getId());
@@ -199,6 +192,36 @@ public class OrderController {
             modelAndView.addObject("errorMessage", "Необхідно вказати номер ТТН");
             return modelAndView;
         }
+        uploadSerialNumbers(uploadedSerial, myFile);
+        if (!(uploadedSerial.size()==order.getQuantity())){
+            modelAndView.addObject("order", order);
+            modelAndView.addObject("errorMessage", "Завантажено "+uploadedSerial.size()+ " тюнерів, а необхідно " + order.getQuantity());
+            return modelAndView;
+        }
+        else {
+            List<Equipment> mainWarehouseEquipments = equipmentService.findByLocation("mainWarehouse");
+            List<Equipment> localWarehouseEquipments = equipmentService.findByLocation("localWarehouse");
+            List <String> allSerialInStock = getAllSerialInStock(mainWarehouseEquipments,localWarehouseEquipments);
+            List<String> uploadedSerialList = new ArrayList<>();
+            uploadedSerialList.addAll(uploadedSerial);
+            if (allSerialInStock.containsAll(uploadedSerialList)){
+                for (String serial : uploadedSerialList){
+                    equipmentService.editEquipmentLocation(serial);
+                }
+                modelAndView.addObject("successMessage", "Передано "+uploadedSerial.size()+ " тюнерів");
+                order.setTtn(ttn);
+                orderService.closeOrder(order);
+                return new ModelAndView("redirect:/Warehouse/allOrdersList");}
+            else
+            {
+                modelAndView.addObject("order", order);
+                modelAndView.addObject("errorMessage", "Завантажене обладнання неможливо передати оскільки воно відстунє на складі");
+                return modelAndView;
+            }
+        }
+    }
+    private static void uploadSerialNumbers (Set<String> uploadedSerial, MultipartFile myFile){
+        InputStream is = null;
         try {
             is = myFile.getInputStream();
         } catch (IOException e) {
@@ -220,39 +243,13 @@ public class OrderController {
                 uploadedSerial.add(cell.getStringCellValue());
             }
         }
-        if (!(uploadedSerial.size()==order.getQuantity())){
-            modelAndView.addObject("order", order);
-            modelAndView.addObject("errorMessage", "Завантажено "+uploadedSerial.size()+ " тюнерів, а необхідно " + order.getQuantity());
-            return modelAndView;
-        }
-        else {
-            List<Equipment> warehouseEquipments = new ArrayList<>();
-            List<Equipment> mainWarehouseEquipments = equipmentService.findByLocation("mainWarehouse");
-            List<Equipment> localWarehouseEquipments = equipmentService.findByLocation("localWarehouse");
-            warehouseEquipments.addAll(mainWarehouseEquipments);
-            warehouseEquipments.addAll(localWarehouseEquipments);
-            List <String> allSerial = new ArrayList<>();
-            List<String> uploadedSerialList = new ArrayList<>();
-            uploadedSerialList.addAll(uploadedSerial);
-            for (Equipment equipment : warehouseEquipments){
-                allSerial.add(equipment.getSerialNumber());
-            }
-
-            if (allSerial.containsAll(uploadedSerialList)){
-                for (String serial : uploadedSerialList){
-                    equipmentService.editEquipmentLocation(serial);
-                }
-                modelAndView.addObject("successMessage", "Передано "+uploadedSerial.size()+ " тюнерів");
-                order.setTtn(ttn);
-                orderService.closeOrder(order);
-                return new ModelAndView("redirect:/Warehouse/allOrdersList");}
-            else
-            {
-                modelAndView.addObject("order", order);
-                modelAndView.addObject("errorMessage", "Завантажене обладнання неможливо передати оскільки воно відстунє на складі");
-                return modelAndView;
-            }
-
-        }
+    }
+    private static List <String> getAllSerialInStock (List<Equipment> mainWarehouseEquipment, List<Equipment> localWarehouseEquipment){
+        List<Equipment> allEquipmentInStock = new ArrayList<>();
+        allEquipmentInStock.addAll(mainWarehouseEquipment);
+        allEquipmentInStock.addAll(localWarehouseEquipment);
+        List <String> allSerialInStock = new ArrayList<>();
+        allEquipmentInStock.stream().forEach(equipment -> allSerialInStock.add(equipment.getSerialNumber()));
+                 return allSerialInStock;
     }
 }
